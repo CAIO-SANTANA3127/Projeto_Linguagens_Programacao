@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análise do Desemprego no Brasil · G2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #0f172a;
+      --blue-800:  #1e40af;
+      --blue-600:  #2563eb;
+      --blue-400:  #60a5fa;
+      --blue-50:   #eff6ff;
+      --slate-700: #334155;
+      --slate-500: #64748b;
+      --slate-300: #cbd5e1;
+      --slate-100: #f1f5f9;
+      --slate-50:  #f8fafc;
+      --white:     #ffffff;
+      --green:     #16a34a;
+      --amber:     #d97706;
+      --radius-sm: 6px;
+      --radius:    10px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-700);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--navy);
+      color: var(--white);
+      padding: 96px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(37,99,235,.35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; }
+    .hero .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 99px;
+      padding: 5px 16px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--blue-400);
+      margin-bottom: 24px;
+    }
+    .hero .eyebrow span.dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue-400);
+      display: inline-block;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      margin-bottom: 18px;
+    }
+    .hero h1 span { color: var(--blue-400); }
+    .hero p {
+      font-size: 1rem;
+      color: rgba(255,255,255,.65);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; border-radius: var(--radius-sm);
+      font-size: .875rem; font-weight: 600;
+      text-decoration: none; transition: all .18s ease;
+      letter-spacing: -.01em;
+    }
+    .btn svg { flex-shrink: 0; }
+    .btn-primary {
+      background: var(--white); color: var(--navy);
+      box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.08);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,.16);
+    }
+    .btn-ghost {
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.04);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.3);
+      color: var(--white);
+    }
+
+    /* ── KPIs ── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 1px;
+      max-width: 1100px;
+      margin: -1px auto 0;
+      background: var(--slate-300);
+      border-bottom: 1px solid var(--slate-300);
+    }
+    .kpi-card {
+      background: var(--white);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .kpi-card .value {
+      font-size: 1.75rem; font-weight: 800;
+      color: var(--navy); line-height: 1;
+      letter-spacing: -.03em;
+    }
+    .kpi-card .label {
+      font-size: .72rem; color: var(--slate-500);
+      text-transform: uppercase; letter-spacing: .07em;
+      margin-top: 6px; font-weight: 500;
+    }
+
+    /* ── Layout container ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Section ── */
+    section {
+      padding: 72px 24px 0;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .section-header .icon-wrap {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--blue-50);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-header .icon-wrap svg { color: var(--blue-600); }
+    .section-header h2 {
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--navy); letter-spacing: -.02em;
+    }
+
+    /* ── Cards ── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid var(--slate-300);
+      transition: box-shadow .18s;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+    .card-icon-wrap {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--blue-50);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .card-icon-wrap svg { color: var(--blue-600); }
+    .card h3 { font-size: .9375rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .card p  { font-size: .85rem; color: var(--slate-500); line-height: 1.55; }
+    .card-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 14px;
+      font-size: .82rem; font-weight: 600;
+      color: var(--blue-600); text-decoration: none;
+    }
+    .card-link:hover { color: var(--blue-800); }
+
+    /* ── Tech badges ── */
+    .tech-section { margin-bottom: 24px; }
+    .tech-label {
+      font-size: .75rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+    .tech-label.required { color: var(--slate-500); }
+    .tech-label.advanced { color: var(--amber); }
+    .tech-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tech-badge {
+      border-radius: var(--radius-sm);
+      padding: 5px 12px;
+      font-size: .8rem; font-weight: 600;
+    }
+    .tech-badge.required {
+      background: var(--slate-100);
+      color: var(--slate-700);
+      border: 1px solid var(--slate-300);
+    }
+    .tech-badge.advanced {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    /* ── Questions ── */
+    .questions { list-style: none; display: grid; gap: 8px; }
+    .questions li {
+      background: var(--white);
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-sm);
+      padding: 13px 18px 13px 48px;
+      font-size: .88rem;
+      color: var(--slate-700);
+      position: relative;
+      transition: border-color .15s;
+    }
+    .questions li:hover { border-color: var(--blue-400); }
+    .questions li::before {
+      content: attr(data-n);
+      position: absolute;
+      left: 16px;
+      top: 50%; transform: translateY(-50%);
+      font-size: .72rem; font-weight: 700;
+      color: var(--blue-600);
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--blue-50);
+      display: flex; align-items: center; justify-content: center;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+      padding: 80px 24px;
+      margin-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 80% at 50% 110%, rgba(37,99,235,.3) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta h2 {
+      font-size: 1.75rem; font-weight: 800; margin-bottom: 12px;
+      letter-spacing: -.02em;
+    }
+    .cta p { color: rgba(255,255,255,.6); margin-bottom: 32px; font-size: .95rem; }
+    .btn-cta {
+      background: var(--blue-600); color: var(--white);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 4px 14px rgba(37,99,235,.4);
+    }
+    .btn-cta:hover {
+      background: var(--blue-800);
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 6px 20px rgba(37,99,235,.5);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 28px 24px;
+      font-size: .78rem;
+      color: var(--slate-500);
+      border-top: 1px solid var(--slate-300);
+      background: var(--white);
+      margin-top: 0;
+    }
+    footer strong { color: var(--slate-700); font-weight: 600; }
+
+    /* ── Divider ── */
+    .spacer { height: 1px; background: var(--slate-300); max-width: 1100px; margin: 72px auto 0; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">
+      <span class="dot"></span>
+      Projeto G2 &mdash; Análise e Visualização de Dados
+    </div>
+    <h1>Análise do Desemprego<br>no <span>Brasil</span> (2015–2024)</h1>
+    <p>Dashboard interativo com indicadores de mercado de trabalho, distribuição
+    regional, análise temporal e correlações estatísticas.</p>
+    <div class="hero-btns">
+      <a href="https://projeto-desemprego-brasil.streamlit.app" class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        Acessar Dashboard
+      </a>
+      <a href="https://github.com/seu-usuario/projeto-desemprego-brasil" class="btn btn-ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+        </svg>
+        Ver no GitHub
+      </a>
+      <a href="notebooks/analise_desemprego_brasil.ipynb" class="btn btn-ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Ver Notebook
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- KPIs -->
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="value">9,9%</div>
+    <div class="label">Taxa Média de Desemprego</div>
+  </div>
+  <div class="kpi-card">
+    <div class="value">R$ 2.791</div>
+    <div class="label">Renda Média Nacional</div>
+  </div>
+  <div class="kpi-card">
+    <div class="value">800</div>
+    <div class="label">Registros Analisados</div>
+  </div>
+  <div class="kpi-card">
+    <div class="value">20 UFs</div>
+    <div class="label">Estados Cobertos</div>
+  </div>
+  <div class="kpi-card">
+    <div class="value">2015–2024</div>
+    <div class="label">Período Analisado</div>
+  </div>
+</div>
+
+<!-- PERGUNTAS DE NEGÓCIO -->
+<section>
+  <div class="section-header">
+    <div class="icon-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </div>
+    <h2>Perguntas de Negócio</h2>
+  </div>
+  <ul class="questions">
+    <li data-n="1">Qual é a taxa média de desemprego no Brasil entre 2015 e 2024?</li>
+    <li data-n="2">Quais regiões e estados concentram o maior volume de desemprego?</li>
+    <li data-n="3">Como a pandemia de COVID-19 impactou os indicadores de emprego?</li>
+    <li data-n="4">Qual setor econômico registra maior precariedade de trabalho?</li>
+    <li data-n="5">Existe correlação entre inflação e taxa de desemprego?</li>
+    <li data-n="6">Quais estados geram mais vagas formais per capita?</li>
+  </ul>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section>
+  <div class="section-header">
+    <div class="icon-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+      </svg>
+    </div>
+    <h2>Funcionalidades do Dashboard</h2>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+      </div>
+      <h3>Filtros Múltiplos</h3>
+      <p>Filtre por período, região, UF, setor econômico e nível de risco simultaneamente.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </div>
+      <h3>KPIs Dinâmicos</h3>
+      <p>Indicadores-chave recalculados em tempo real conforme os filtros aplicados.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <h3>Mapa Interativo</h3>
+      <p>Visualização geográfica da taxa de desemprego por estado usando Plotly.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <h3>Série Temporal</h3>
+      <p>Evolução histórica com destaque para o impacto da pandemia em 2020–2021.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="5" x2="6" y2="19"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/>
+        </svg>
+      </div>
+      <h3>Correlações Estatísticas</h3>
+      <p>Matriz de correlação de Pearson e scatter plots com linha de tendência.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+      </div>
+      <h3>Banco de Dados SQLite</h3>
+      <p>Persistência e consultas via SQLAlchemy — integração avançada de dados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TECNOLOGIAS -->
+<section>
+  <div class="section-header">
+    <div class="icon-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg>
+    </div>
+    <h2>Tecnologias Utilizadas</h2>
+  </div>
+  <div class="tech-section">
+    <div class="tech-label required">Obrigatórias</div>
+    <div class="tech-grid">
+      <span class="tech-badge required">Python 3.11</span>
+      <span class="tech-badge required">Pandas</span>
+      <span class="tech-badge required">Matplotlib</span>
+      <span class="tech-badge required">Seaborn</span>
+      <span class="tech-badge required">Streamlit</span>
+      <span class="tech-badge required">GitHub / GitHub Pages</span>
+    </div>
+  </div>
+  <div class="tech-section">
+    <div class="tech-label advanced">Avançadas</div>
+    <div class="tech-grid">
+      <span class="tech-badge advanced">SQLAlchemy + SQLite</span>
+      <span class="tech-badge advanced">Plotly — Mapas Interativos</span>
+      <span class="tech-badge advanced">Correlação Estatística — NumPy</span>
+    </div>
+  </div>
+</section>
+
+<!-- ARQUIVOS -->
+<section>
+  <div class="section-header">
+    <div class="icon-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+      </svg>
+    </div>
+    <h2>Arquivos do Projeto</h2>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        </svg>
+      </div>
+      <h3>Notebook de Análise</h3>
+      <p>Análise exploratória completa com limpeza, engenharia de atributos, gráficos e interpretações.</p>
+      <a href="notebooks/analise_desemprego_brasil.ipynb" class="card-link">
+        Abrir Notebook
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </div>
+      <h3>Base de Dados</h3>
+      <p>Simulação de indicadores de desemprego por UF, região, setor e trimestre (2015–2024).</p>
+      <a href="dados/simulacao_desemprego_brasil.csv" class="card-link">
+        Baixar CSV
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+        </svg>
+      </div>
+      <h3>README</h3>
+      <p>Documentação completa com instruções de instalação, execução e publicação do projeto.</p>
+      <a href="README.md" class="card-link">
+        Ver README
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta">
+  <div class="cta-inner">
+    <h2>Explore o Dashboard Interativo</h2>
+    <p>Filtre, analise e visualize os dados do mercado de trabalho brasileiro em tempo real.</p>
+    <a href="https://projeto-desemprego-brasil.streamlit.app" class="btn btn-cta">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+      Acessar Dashboard Streamlit
+    </a>
+  </div>
+</div>
+
+<footer>
+  Desenvolvido como projeto de avaliação G2 &middot;
+  <strong>Análise e Visualização de Dados</strong> &middot;
+  Dados: Simulação baseada em fontes IBGE/Brasil
+</footer>
+
+</body>
+</html>
