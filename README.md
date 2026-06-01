@@ -120,7 +120,7 @@ python -m streamlit run app.py
 |---|---|
 | Repositório GitHub | `https://github.com/seu-usuario/projeto-desemprego-brasil` |
 | GitHub Pages | `https://seu-usuario.github.io/projeto-desemprego-brasil` |
-| Dashboard Streamlit | `https://projeto-desemprego-brasil.streamlit.app` |
+| Dashboard Streamlit | `[https://projeto-desemprego-brasil.streamlit.app](https://7pk6bstknerbywz4ojgh9y.streamlit.app/)` |
 
 ---
 
