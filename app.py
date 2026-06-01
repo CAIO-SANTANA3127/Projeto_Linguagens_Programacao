@@ -51,7 +51,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── CSS personalizado ──────────────────────────────────────────────────────────
+# ── CSS personalizado ─────────────────────────────────────────────────────────
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -134,7 +134,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Carga de dados ─────────────────────────────────────────────────────────────
+# ── Carga de dados ─────────────────────────────────────────────────────────
 @st.cache_data(show_spinner="Carregando dados do banco SQLite…")
 def load_data() -> pd.DataFrame:
     return carregar_dataframe()
@@ -142,9 +142,9 @@ def load_data() -> pd.DataFrame:
 df_raw = load_data()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SIDEBAR — FILTROS MÚLTIPLOS  (funcionalidade intermediária)
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 with st.sidebar:
     st.image(_logo, width=160)
     st.title("Filtros")
@@ -189,7 +189,7 @@ with st.sidebar:
     st.divider()
     st.caption("Fonte: Simulação IBGE/Brasil · 2015–2024")
 
-# ── Aplicar filtros ────────────────────────────────────────────────────────────
+# ── Aplicar filtros ────────────────────────────────────────────────────────
 df = df_raw[
     (df_raw["ano"] >= ano_min) &
     (df_raw["ano"] <= ano_max) &
@@ -199,7 +199,7 @@ df = df_raw[
     (df_raw["nivel_risco"].isin(riscos_sel))
 ].copy()
 
-# ── Cabeçalho principal ────────────────────────────────────────────────────────
+# ── Cabeçalho principal ───────────────────────────────────────────────────────
 st.title("Análise do Desemprego no Brasil (2015–2024)")
 st.markdown(
     "Dashboard interativo com indicadores de mercado de trabalho, "
@@ -214,9 +214,9 @@ st.markdown(f"**{len(df):,} registros** carregados com os filtros aplicados.")
 st.divider()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # NAVEGAÇÃO — ABAS (dashboard multipágina)
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 aba1, aba2, aba3, aba4, aba5 = st.tabs([
     "Visão Geral",
     "Série Temporal",
@@ -226,9 +226,9 @@ aba1, aba2, aba3, aba4, aba5 = st.tabs([
 ])
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # ABA 1 — VISÃO GERAL / KPIs DINÂMICOS
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 with aba1:
     st.markdown('<div class="section-title">Indicadores-chave</div>',
                 unsafe_allow_html=True)
@@ -329,9 +329,9 @@ with aba1:
     )
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # ABA 2 — SÉRIE TEMPORAL
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 with aba2:
     st.markdown('<div class="section-title">Evolução da Taxa de Desemprego</div>',
                 unsafe_allow_html=True)
@@ -417,9 +417,9 @@ with aba2:
     )
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # ABA 3 — ANÁLISE REGIONAL / MAPA INTERATIVO
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 with aba3:
     st.markdown('<div class="section-title">Mapa — Taxa de Desemprego por Estado</div>',
                 unsafe_allow_html=True)
@@ -506,9 +506,9 @@ with aba3:
     )
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # ABA 4 — ANÁLISE SETORIAL
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 with aba4:
     st.markdown('<div class="section-title">Desempenho por Setor Predominante</div>',
                 unsafe_allow_html=True)
@@ -577,9 +577,9 @@ with aba4:
     st.plotly_chart(fig_heat, width="stretch")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # ABA 5 — CORRELAÇÕES ESTATÍSTICAS (funcionalidade avançada)
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 with aba5:
     st.markdown('<div class="section-title">Análise de Correlações Estatísticas</div>',
                 unsafe_allow_html=True)
@@ -602,29 +602,60 @@ with aba5:
     with col1:
         st.markdown('<div class="section-title">Taxa de Desemprego × Inflação</div>',
                     unsafe_allow_html=True)
-        fig_sc1 = px.scatter(
-            df, x="inflacao", y="taxa_desemprego",
-            color="regiao", trendline="ols", opacity=0.6,
-            labels={"inflacao": "Inflação (%)",
-                    "taxa_desemprego": "Taxa de Desemprego (%)"},
-        )
+        
+        # Limpar dados com NaN antes de criar o scatter com trendline
+        df_clean1 = df[["inflacao", "taxa_desemprego", "regiao"]].dropna()
+        
+        if len(df_clean1) > 1:
+            fig_sc1 = px.scatter(
+                df_clean1, x="inflacao", y="taxa_desemprego",
+                color="regiao", trendline="ols", opacity=0.6,
+                labels={"inflacao": "Inflação (%)",
+                        "taxa_desemprego": "Taxa de Desemprego (%)"},
+            )
+        else:
+            fig_sc1 = px.scatter(
+                df_clean1, x="inflacao", y="taxa_desemprego",
+                color="regiao", opacity=0.6,
+                labels={"inflacao": "Inflação (%)",
+                        "taxa_desemprego": "Taxa de Desemprego (%)"},
+            )
+        
         fig_sc1.update_layout(margin=dict(t=20, b=20))
         st.plotly_chart(fig_sc1, width="stretch")
 
     with col2:
         st.markdown('<div class="section-title">Renda Média × Vagas Formais</div>',
                     unsafe_allow_html=True)
-        fig_sc2 = px.scatter(
-            df, x="vagas_formais", y="renda_media",
-            color="nivel_risco",
-            color_discrete_map={
-                "Baixo": "#22c55e", "Médio": "#facc15",
-                "Alto": "#f97316", "Crítico": "#ef4444",
-            },
-            trendline="ols", opacity=0.6,
-            labels={"vagas_formais": "Vagas Formais",
-                    "renda_media": "Renda Média (R$)"},
-        )
+        
+        # Limpar dados com NaN antes de criar o scatter com trendline
+        df_clean2 = df[["vagas_formais", "renda_media", "nivel_risco"]].dropna()
+        
+        if len(df_clean2) > 1:
+            fig_sc2 = px.scatter(
+                df_clean2, x="vagas_formais", y="renda_media",
+                color="nivel_risco",
+                color_discrete_map={
+                    "Baixo": "#22c55e", "Médio": "#facc15",
+                    "Alto": "#f97316", "Crítico": "#ef4444",
+                },
+                trendline="ols", opacity=0.6,
+                labels={"vagas_formais": "Vagas Formais",
+                        "renda_media": "Renda Média (R$)"},
+            )
+        else:
+            fig_sc2 = px.scatter(
+                df_clean2, x="vagas_formais", y="renda_media",
+                color="nivel_risco",
+                color_discrete_map={
+                    "Baixo": "#22c55e", "Médio": "#facc15",
+                    "Alto": "#f97316", "Crítico": "#ef4444",
+                },
+                opacity=0.6,
+                labels={"vagas_formais": "Vagas Formais",
+                        "renda_media": "Renda Média (R$)"},
+            )
+        
         fig_sc2.update_layout(margin=dict(t=20, b=20))
         st.plotly_chart(fig_sc2, width="stretch")
 
