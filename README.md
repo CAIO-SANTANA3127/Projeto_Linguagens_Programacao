@@ -134,4 +134,4 @@ python -m streamlit run app.py
 
 ---
 
-*Desenvolvido como projeto de avaliação G2 · Caio de Santana Pereira· [Ano]*
+*Desenvolvido como projeto de avaliação G2 · Caio de Santana Pereira*
